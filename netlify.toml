@@ -1,0 +1,8 @@
+# Filio deploys as a fully static site (next.config: output "export") — no server,
+# no serverless functions, no runtime config. Netlify just serves the /out folder.
+[build]
+  command = "npm run build"
+  publish = "out"
+
+[build.environment]
+  NODE_VERSION = "20"

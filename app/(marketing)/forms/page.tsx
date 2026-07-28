@@ -90,9 +90,10 @@ export default function FormsHubPage() {
         <PiSparkle className="mt-0.5 h-5 w-5 shrink-0 text-primary" aria-hidden />
         <p className="text-sm text-muted-foreground">
           <span className="font-semibold text-foreground">Complex forms stay honest about their limits. </span>
-          Filio fully computes ITR-1. For ITR-2, ITR-3, and ITR-4 it prepares every section and
-          computes your salary, house, and deduction tax, then clearly flags capital-gains, business,
-          and presumptive tax as finalized on the official portal.
+          Filio computes the supported ITR-1 income and deduction cases. For ITR-2, ITR-3, and
+          ITR-4 it guides you through supported sections and computes salary, house-property, and
+          deduction tax, then clearly flags capital-gains, business, and presumptive schedules that
+          must be finalized on the official portal.
         </p>
       </div>
     </div>

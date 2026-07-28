@@ -102,6 +102,7 @@ function withDefaults(saved: FilioData): FilioData {
   return {
     ...defaults,
     ...saved,
+    eligibility: { ...defaults.eligibility, ...saved.eligibility },
     personal: { ...defaults.personal, ...saved.personal },
     salary: { ...defaults.salary, ...saved.salary },
     otherIncome: { ...defaults.otherIncome, ...saved.otherIncome },

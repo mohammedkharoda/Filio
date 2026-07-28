@@ -18,6 +18,10 @@ export interface EligibilityAnswers {
   isCompanyDirector: boolean;
   holdsUnlistedShares: boolean;
   agriculturalIncomeOver5k: boolean;
+  hasSpecialRateOtherIncome: boolean;
+  hasTds194N: boolean;
+  hasDeferredEsopTax: boolean;
+  hasBroughtForwardLoss: boolean;
 }
 
 export interface Disqualifier {
@@ -52,6 +56,10 @@ export function defaultEligibilityAnswers(): EligibilityAnswers {
     isCompanyDirector: false,
     holdsUnlistedShares: false,
     agriculturalIncomeOver5k: false,
+    hasSpecialRateOtherIncome: false,
+    hasTds194N: false,
+    hasDeferredEsopTax: false,
+    hasBroughtForwardLoss: false,
   };
 }
 
@@ -77,7 +85,11 @@ export function recommendForm(a: EligibilityAnswers): import("@/store/types").Fo
     a.moreThanTwoHouseProperties ||
     a.isCompanyDirector ||
     a.holdsUnlistedShares ||
-    a.agriculturalIncomeOver5k;
+    a.agriculturalIncomeOver5k ||
+    a.hasSpecialRateOtherIncome ||
+    a.hasTds194N ||
+    a.hasDeferredEsopTax ||
+    a.hasBroughtForwardLoss;
 
   return beyondItr1 ? "ITR2" : "ITR1";
 }
@@ -90,7 +102,16 @@ export function presumptiveAlternative(a: EligibilityAnswers): boolean {
     a.isResident &&
     !a.totalIncomeOver50L &&
     !a.hasOtherCapitalGains &&
-    !a.hasShortTermCapitalGains
+    !a.hasShortTermCapitalGains &&
+    !a.hasCryptoVda &&
+    !a.hasForeignIncomeOrAssets &&
+    !a.isCompanyDirector &&
+    !a.holdsUnlistedShares &&
+    !a.agriculturalIncomeOver5k &&
+    !a.hasSpecialRateOtherIncome &&
+    !a.hasTds194N &&
+    !a.hasDeferredEsopTax &&
+    !a.hasBroughtForwardLoss
   );
 }
 
@@ -181,6 +202,37 @@ export function checkEligibility(a: EligibilityAnswers): EligibilityResult {
     d.push({
       code: "agri_over_5k",
       message: "Your agricultural income is more than ₹5,000. ITR-1 allows only up to ₹5,000.",
+      suggestion: ITR2,
+    });
+  }
+  if (a.hasSpecialRateOtherIncome) {
+    d.push({
+      code: "special_rate_other_income",
+      message:
+        "You have lottery, racehorse, legal-gambling, or other special-rate income that ITR-1 can't report.",
+      suggestion: ITR2,
+    });
+  }
+  if (a.hasTds194N) {
+    d.push({
+      code: "tds_194n",
+      message: "Tax was deducted from cash withdrawals under Section 194N, which ITR-1 doesn't allow.",
+      suggestion: ITR2,
+    });
+  }
+  if (a.hasDeferredEsopTax) {
+    d.push({
+      code: "deferred_esop",
+      message:
+        "You have deferred tax on ESOPs from an eligible start-up, which ITR-1 can't report.",
+      suggestion: ITR2,
+    });
+  }
+  if (a.hasBroughtForwardLoss) {
+    d.push({
+      code: "brought_forward_loss",
+      message:
+        "You have a brought-forward loss or a loss to carry forward, which ITR-1 can't report.",
       suggestion: ITR2,
     });
   }

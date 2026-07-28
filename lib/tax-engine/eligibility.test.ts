@@ -34,6 +34,10 @@ describe("Each §7 disqualifier blocks ITR-1", () => {
     ["isCompanyDirector", { isCompanyDirector: true }, "director"],
     ["holdsUnlistedShares", { holdsUnlistedShares: true }, "unlisted_shares"],
     ["agriculturalIncomeOver5k", { agriculturalIncomeOver5k: true }, "agri_over_5k"],
+    ["hasSpecialRateOtherIncome", { hasSpecialRateOtherIncome: true }, "special_rate_other_income"],
+    ["hasTds194N", { hasTds194N: true }, "tds_194n"],
+    ["hasDeferredEsopTax", { hasDeferredEsopTax: true }, "deferred_esop"],
+    ["hasBroughtForwardLoss", { hasBroughtForwardLoss: true }, "brought_forward_loss"],
   ];
 
   it.each(cases)("%s → ineligible with code %s", (_label, override, code) => {

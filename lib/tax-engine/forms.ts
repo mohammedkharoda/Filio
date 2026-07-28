@@ -4,7 +4,7 @@
 
 import type { FormId } from "@/store/types";
 
-/** "ready" = fully computed by Filio (ITR-1). "beta" = flow built, some tax staged for the portal. */
+/** "ready" = supported tax is computed by Filio. "beta" = some tax is staged for the portal. */
 export type FormStatus = "ready" | "beta";
 
 /** Every wizard step Filio can render. A form lists the ordered subset it needs. */
@@ -95,7 +95,7 @@ export const FORMS: Record<FormId, FormMeta> = {
       "Resident individuals, HUFs, and firms (not LLPs)",
       "Presumptive income under 44AD, 44ADA, or 44AE",
       "Total income up to Rs 50 lakh",
-      "Can also carry salary, one house, and interest income",
+      "Can also carry salary, up to two houses, and interest income",
     ],
     notFor: "Regular books, capital gains, or income above Rs 50 lakh (use ITR-3 or ITR-2).",
     status: "beta",

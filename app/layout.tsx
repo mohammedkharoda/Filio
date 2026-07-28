@@ -1,22 +1,8 @@
 import type { Metadata, Viewport } from "next";
-import { Space_Grotesk, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { SiteFooter } from "@/components/site-footer";
 import { HelpPanel } from "@/components/help-panel";
 import { AmbientBackground } from "@/components/ambient-background";
-
-const grotesk = Space_Grotesk({
-  variable: "--font-grotesk",
-  subsets: ["latin"],
-  weight: ["500", "600", "700"],
-  display: "swap",
-});
-
-const jakarta = Plus_Jakarta_Sans({
-  variable: "--font-jakarta",
-  subsets: ["latin"],
-  display: "swap",
-});
 
 export const metadata: Metadata = {
   title: "Filio — Private ITR Preparation, Made Clear",
@@ -59,7 +45,7 @@ export default function RootLayout({
     <html
       lang="en"
       data-scroll-behavior="smooth"
-      className={`${grotesk.variable} ${jakarta.variable} h-full`}
+      className="h-full"
     >
       <body className="min-h-full flex flex-col">
         <AmbientBackground />

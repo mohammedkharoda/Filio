@@ -25,7 +25,7 @@ The application labels staged calculations in the interface and generated PDF. I
 
 Filio supports the preparation workflow from form selection to export:
 
-1. Recommends ITR-1, ITR-2, or ITR-3 from 12 eligibility questions
+1. Recommends ITR-1, ITR-2, or ITR-3 from 16 eligibility questions
 2. Offers ITR-4 when presumptive taxation may apply
 3. Adapts the wizard steps to the selected form
 4. Parses supported Form 16 fields inside the browser
@@ -122,7 +122,7 @@ Install these tools before running the project:
 
 No environment variables, external services, or database are required.
 
-The production build downloads Plus Jakarta Sans and Space Grotesk through `next/font`. The build environment must allow access to Google Fonts.
+The production build uses a local system-font stack and does not need to download font assets.
 
 ## Run the project locally
 

@@ -93,8 +93,8 @@
   --radius-md: calc(var(--radius) - 0.25rem);
   --radius-sm: calc(var(--radius) - 0.45rem);
 
-  --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-grotesk), var(--font-jakarta), ui-sans-serif, sans-serif;
+  --font-sans: "Aptos", "Segoe UI", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Aptos Display", "Segoe UI", ui-sans-serif, system-ui, sans-serif;
 }
 
 /*

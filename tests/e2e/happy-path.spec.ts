@@ -3,15 +3,15 @@ import { test, expect } from "@playwright/test";
 test.describe("Filio happy path", () => {
   test("landing → eligibility → wizard → review → download", async ({ page }) => {
     await page.goto("/");
-    await expect(page.getByRole("heading", { name: /without the fear/i })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /your itr, finally made clear/i })).toBeVisible();
     // The core trust promise is visible on the landing page.
     await expect(page.getByText(/never leaves your device/i).first()).toBeVisible();
 
-    await page.getByRole("link", { name: /start preparing/i }).click();
+    await page.getByRole("link", { name: /find your form/i }).first().click();
 
     // Eligibility: defaults are eligible.
-    await expect(page.getByRole("heading", { name: /is itr-1 right for you/i })).toBeVisible();
-    await page.getByRole("button", { name: /continue to the questions/i }).click();
+    await expect(page.getByRole("heading", { name: /which itr fits you/i })).toBeVisible();
+    await page.getByRole("button", { name: /prepare itr-1/i }).click();
     await page.waitForURL(/\/wizard/);
 
     // Personal step
@@ -57,16 +57,16 @@ test.describe("Filio happy path", () => {
 
   test("live tax panel reflects the new-regime rebate", async ({ page }) => {
     await page.goto("/eligibility");
-    await page.getByRole("button", { name: /continue to the questions/i }).click();
+    await page.getByRole("button", { name: /prepare itr-1/i }).click();
     await page.waitForURL(/\/wizard/);
     await page.getByRole("button", { name: "Continue", exact: true }).click(); // skip personal
     await expect(page.getByRole("heading", { name: /your income/i })).toBeVisible();
     await page.locator("#grossSalary").fill("1275000"); // taxable 12L after 75k SD → tax 0
-    await expect(page.getByText("Your tax, side by side")).toBeVisible();
-    await expect(page.getByText(/saves you/i)).toBeVisible();
+    await expect(page.getByText("Old vs new regime")).toBeVisible();
+    await expect(page.getByText(/new regime saves/i)).toBeVisible();
   });
 
-  test("ineligible answer blocks proceeding", async ({ page }) => {
+  test("business income routes away from ITR-1", async ({ page }) => {
     await page.goto("/eligibility");
     // "Do you have any income from a business or profession?" → Yes
     const businessCard = page
@@ -74,7 +74,7 @@ test.describe("Filio happy path", () => {
       .filter({ hasText: /income from a business or profession/i })
       .last();
     await businessCard.getByRole("radio", { name: "Yes" }).click();
-    await expect(page.getByText(/isn.t the right form for you/i)).toBeVisible();
-    await expect(page.getByRole("button", { name: /continue is unavailable/i })).toBeDisabled();
+    await expect(page.getByText(/itr-1 doesn't cover/i)).toBeVisible();
+    await expect(page.getByRole("button", { name: /prepare itr-3/i })).toBeVisible();
   });
 });

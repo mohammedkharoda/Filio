@@ -286,7 +286,7 @@ export default function LandingPage() {
                     <h3 className="mt-1 text-3xl font-bold">{selectedForm.name}{selectedForm.aka ? ` · ${selectedForm.aka}` : ""}</h3>
                   </div>
                   <Badge variant={selectedForm.status === "ready" ? "success" : "beta"}>
-                    {selectedForm.status === "ready" ? "Fully computed" : "Guided preparation"}
+                    {selectedForm.status === "ready" ? "Supported tax computed" : "Guided preparation"}
                   </Badge>
                 </div>
                 <p className="mt-4 text-lg text-muted-foreground">{selectedForm.tagline}</p>

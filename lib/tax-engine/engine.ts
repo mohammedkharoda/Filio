@@ -139,7 +139,7 @@ function computeNewRegime(
 ): RegimeResult {
   const nr = cfg.newRegime;
   const sd = standardDeductionFor(input, nr.standardDeduction);
-  const fpDed = familyPensionDeductionFor(input, cfg.familyPensionDeductionCap);
+  const fpDed = familyPensionDeductionFor(input, nr.familyPensionDeductionCap);
   const employerNps = nonNeg(input.deductions.employerNps80CCD2);
 
   // New regime: no set-off of house-property loss against other heads.
@@ -203,7 +203,7 @@ function computeOldRegime(
 ): RegimeResult {
   const or = cfg.oldRegime;
   const sd = standardDeductionFor(input, or.standardDeduction);
-  const fpDed = familyPensionDeductionFor(input, cfg.familyPensionDeductionCap);
+  const fpDed = familyPensionDeductionFor(input, or.familyPensionDeductionCap);
   const chapterVIA = cappedOldDeductions(input.deductions, input.ageBand);
 
   // Old regime: house-property loss set-off capped at ₹2L.

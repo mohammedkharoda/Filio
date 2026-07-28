@@ -38,7 +38,7 @@ export function AppSidebar({ nav, idPrefix }: { nav: SidebarNav; idPrefix?: stri
               {form.aka ? <span className="text-muted-foreground"> · {form.aka}</span> : null}
             </p>
           </div>
-          {form.status === "beta" ? <Badge variant="beta">Guided</Badge> : <Badge variant="success">Ready</Badge>}
+          {form.status === "beta" ? <Badge variant="beta">Guided</Badge> : <Badge variant="success">Supported</Badge>}
         </div>
         <Link
           href="/forms"

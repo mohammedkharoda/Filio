@@ -53,9 +53,19 @@ describe("New regime — §6c required cases", () => {
     expect(r.taxBeforeCess).toBe(75000);
     expect(r.totalTax).toBe(78000); // + 4% cess
   });
+
+  it("uses the Rs 25,000 family-pension deduction available in the new regime", () => {
+    const r = computeRegime(makeInput({ familyPensionIncome: 90000 }), "new");
+    expect(r.familyPensionDeduction).toBe(25000);
+  });
 });
 
 describe("Old regime — §6c required cases", () => {
+  it("keeps the old-regime family-pension deduction capped at Rs 15,000", () => {
+    const r = computeRegime(makeInput({ familyPensionIncome: 90000 }), "old");
+    expect(r.familyPensionDeduction).toBe(15000);
+  });
+
   it("taxable ₹5,00,000 (below 60) → slab ₹12,500, rebate ₹12,500 → tax ₹0", () => {
     const r = computeRegime(makeInput({ otherIncome: 500000 }), "old");
     expect(r.taxableIncome).toBe(500000);

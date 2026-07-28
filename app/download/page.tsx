@@ -81,7 +81,7 @@ export default function DownloadPage() {
 
       <div className="flex flex-col items-start gap-3">
         <Badge variant={comp.staged ? "beta" : "success"}>
-          {comp.staged ? "Ready to file (with portal schedules)" : "Ready to file"}
+          {comp.staged ? "Portal schedules remaining" : "Preparation summary ready"}
         </Badge>
         <h1 className="text-3xl font-extrabold tracking-tight">Your {form.name} summary</h1>
         <p className="text-muted-foreground">

@@ -9,10 +9,6 @@ export const AY_2026_27 = {
   financialYear: "2025-26",
   cessRate: 0.04, // 4% Health & Education Cess on (tax − 87A rebate + surcharge)
 
-  // Family pension: deduction is 1/3 of family pension, capped at this amount.
-  // Allowed in BOTH regimes.
-  familyPensionDeductionCap: 15000,
-
   // LTCG u/s 112A: first ₹1.25L of gains is exempt; the balance is taxed at a
   // flat special rate (never at slab rates, never eligible for the 87A rebate).
   // Within ITR-1 scope 112A gains are capped at ₹1.25L, so the taxable balance is 0.
@@ -24,6 +20,7 @@ export const AY_2026_27 = {
   newRegime: {
     isDefault: true, // default under Section 115BAC
     standardDeduction: 75000, // salary / pension only
+    familyPensionDeductionCap: 25000, // 1/3 of family pension, capped
     basicExemption: 400000, // same for ALL ages (no senior benefit here)
     // Marginal (band) rates:
     slabs: [
@@ -52,6 +49,7 @@ export const AY_2026_27 = {
   oldRegime: {
     isDefault: false,
     standardDeduction: 50000, // salary / pension
+    familyPensionDeductionCap: 15000, // 1/3 of family pension, capped
     basicExemption: {
       // age-based
       below60: 250000,

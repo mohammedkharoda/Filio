@@ -52,11 +52,30 @@ const QUESTIONS: Question[] = [
     ),
   },
   { key: "hasCryptoVda", question: "Did you earn any income from crypto or other virtual digital assets?" },
-  { key: "hasForeignIncomeOrAssets", question: "Do you have any foreign income or foreign assets?" },
+  {
+    key: "hasForeignIncomeOrAssets",
+    question: "Do you have foreign income, foreign assets, or signing authority in an account outside India?",
+  },
   { key: "moreThanTwoHouseProperties", question: "Do you own more than two house properties?" },
   { key: "isCompanyDirector", question: "Are you a director in any company?" },
   { key: "holdsUnlistedShares", question: "Did you hold unlisted (private company) shares this year?" },
   { key: "agriculturalIncomeOver5k", question: "Is your agricultural income more than Rs 5,000?" },
+  {
+    key: "hasSpecialRateOtherIncome",
+    question: "Do you have income from lotteries, racehorses, legal gambling, or another special-rate source?",
+  },
+  {
+    key: "hasTds194N",
+    question: "Was tax deducted from cash withdrawals under Section 194N?",
+  },
+  {
+    key: "hasDeferredEsopTax",
+    question: "Do you have deferred tax on ESOPs received from an eligible start-up?",
+  },
+  {
+    key: "hasBroughtForwardLoss",
+    question: "Do you have a brought-forward loss or a loss that must be carried forward?",
+  },
 ];
 
 export default function RecommenderPage() {
@@ -87,8 +106,8 @@ export default function RecommenderPage() {
     <div className="mx-auto w-full max-w-3xl px-5 py-10">
       <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl">Which ITR fits you?</h1>
       <p className="mt-2 text-muted-foreground">
-        Twelve quick questions. Filio points you to the right form and prepares it. This takes about a
-        minute, and nothing is saved anywhere but your own browser.
+        Sixteen quick questions. Filio points you to the right form and prepares it. This takes about
+        two minutes, and nothing is saved anywhere but your own browser.
       </p>
       <TrustBadge className="mt-4" />
 
@@ -125,7 +144,7 @@ export default function RecommenderPage() {
               {form.aka ? <span className="text-primary-foreground/70"> · {form.aka}</span> : null}
             </span>
             <span className="rounded-full bg-white/15 px-2.5 py-1 text-xs font-semibold">
-              {form.status === "ready" ? "Fully computed" : "Beta · some tax staged"}
+              {form.status === "ready" ? "Supported tax computed" : "Beta · some tax staged"}
             </span>
           </div>
           <p className="mt-2 max-w-lg text-sm text-primary-foreground/90">{form.tagline}</p>

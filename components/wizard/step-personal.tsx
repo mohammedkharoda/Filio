@@ -28,6 +28,7 @@ const AGE_OPTIONS: { value: AgeBand; label: string }[] = [
 export function StepPersonal() {
   const personal = useFilioStore((s) => s.data.personal);
   const setPersonal = useFilioStore((s) => s.setPersonal);
+  const selectedForm = useFilioStore((s) => s.data.selectedForm);
 
   // Complaining while someone is still mid-PAN is what made this field feel
   // broken, so a problem is only voiced once they leave the field or fill it.
@@ -65,12 +66,7 @@ export function StepPersonal() {
     panHint = panCheck.message;
   }
 
-  // When a valid DOB is entered, suggest the age band automatically.
-  React.useEffect(() => {
-    const band = ageBandFromDob(personal.dob);
-    if (band && band !== personal.ageBand) setPersonal({ ageBand: band });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [personal.dob]);
+  const calculatedAgeBand = ageBandFromDob(personal.dob);
 
   return (
     <div className="space-y-6">
@@ -111,7 +107,12 @@ export function StepPersonal() {
         type="date"
         autoComplete="bday"
         value={personal.dob}
-        onChange={(e) => setPersonal({ dob: e.target.value })}
+        max="2026-03-31"
+        onChange={(e) => {
+          const dob = e.target.value;
+          const ageBand = ageBandFromDob(dob);
+          setPersonal(ageBand ? { dob, ageBand } : { dob });
+        }}
         hint="Used only to work out your age band for tax."
       />
 
@@ -119,13 +120,13 @@ export function StepPersonal() {
         <Label>Your age on 31 March 2026</Label>
         <RadioGroup
           value={personal.ageBand}
-          onValueChange={(v) => setPersonal({ ageBand: v as AgeBand })}
+          disabled={!!calculatedAgeBand}
           className="gap-2"
         >
           {AGE_OPTIONS.map((opt) => (
             <label
               key={opt.value}
-              className="flex cursor-pointer items-center gap-3 rounded-xl border border-border bg-card p-3 transition-[background-color,border-color,box-shadow] hover:bg-muted/50 has-[button[data-state=checked]]:border-primary has-[button[data-state=checked]]:bg-secondary has-[button[data-state=checked]]:shadow-sm"
+              className="flex items-center gap-3 rounded-xl border border-border bg-card p-3 transition-[background-color,border-color,box-shadow] has-[button[data-state=checked]]:border-primary has-[button[data-state=checked]]:bg-secondary has-[button[data-state=checked]]:shadow-sm"
             >
               <RadioGroupItem value={opt.value} id={`age-${opt.value}`} />
               <span className="font-medium">{opt.label}</span>
@@ -133,6 +134,9 @@ export function StepPersonal() {
           ))}
         </RadioGroup>
         <p className="text-sm text-muted-foreground">
+          {calculatedAgeBand
+            ? "Calculated automatically from your date of birth and locked to prevent a mismatch."
+            : "Enter your date of birth above to calculate this automatically."}{" "}
           Seniors get a higher <GlossaryTip term="basicExemption" /> in the old regime.
         </p>
       </div>
@@ -165,18 +169,20 @@ export function StepPersonal() {
         />
       </div>
 
-      <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-border bg-card p-4 transition-[background-color,border-color,box-shadow] hover:bg-muted/35 has-[button[data-state=checked]]:border-primary/50 has-[button[data-state=checked]]:bg-secondary/40 has-[button[data-state=checked]]:shadow-sm">
-        <Checkbox
-          checked={personal.residentConfirmed}
-          onCheckedChange={(v) => setPersonal({ residentConfirmed: v === true })}
-          id="resident"
-          className="mt-0.5"
-        />
-        <span className="text-sm">
-          I confirm I was a <GlossaryTip term="resident" /> of India for tax purposes in FY
-          2025-26. (ITR-1 is only for residents.)
-        </span>
-      </label>
+      {selectedForm === "ITR1" || selectedForm === "ITR4" ? (
+        <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-border bg-card p-4 transition-[background-color,border-color,box-shadow] hover:bg-muted/35 has-[button[data-state=checked]]:border-primary/50 has-[button[data-state=checked]]:bg-secondary/40 has-[button[data-state=checked]]:shadow-sm">
+          <Checkbox
+            checked={personal.residentConfirmed}
+            onCheckedChange={(v) => setPersonal({ residentConfirmed: v === true })}
+            id="resident"
+            className="mt-0.5"
+          />
+          <span className="text-sm">
+            I confirm I was a <GlossaryTip term="resident" /> of India for tax purposes in FY
+            2025-26. ({selectedForm === "ITR1" ? "ITR-1" : "ITR-4"} is only for residents.)
+          </span>
+        </label>
+      ) : null}
     </div>
   );
 }

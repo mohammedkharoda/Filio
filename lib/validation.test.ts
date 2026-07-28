@@ -5,6 +5,7 @@ import {
   normalizePanInput,
   validateMobile,
   validatePan,
+  ageBandFromDob,
 } from "./validation";
 
 describe("PAN shape", () => {
@@ -139,5 +140,17 @@ describe("Indian mobile numbers", () => {
 
   it("treats a blank optional number as fine", () => {
     expect(validateMobile("")).toBeNull();
+  });
+});
+
+describe("age band from date of birth", () => {
+  it("uses age on 31 March 2026", () => {
+    expect(ageBandFromDob("1966-03-31")).toBe("senior60to80");
+    expect(ageBandFromDob("1966-04-01")).toBe("below60");
+    expect(ageBandFromDob("1946-03-31")).toBe("superSenior80plus");
+  });
+
+  it("rejects a DOB after the financial-year end", () => {
+    expect(ageBandFromDob("2026-04-01")).toBeNull();
   });
 });

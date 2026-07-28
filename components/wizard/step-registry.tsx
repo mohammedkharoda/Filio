@@ -14,6 +14,7 @@ import { StepHouseProperties } from "./step-house-properties";
 import { StepCapitalGains } from "./step-capital-gains";
 import { StepBusiness } from "./step-business";
 import { StepPresumptive } from "./step-presumptive";
+import { StepForeignIncome } from "./step-foreign-income";
 
 export interface StepDef {
   title: string;
@@ -41,6 +42,11 @@ export const STEP_META: Record<StepKey, StepDef> = {
     title: "Capital gains",
     subtitle: "Shares, mutual funds, property, and crypto",
     Comp: StepCapitalGains,
+  },
+  foreignIncome: {
+    title: "Foreign income & assets",
+    subtitle: "Schedules FSI, TR, FA, and foreign tax credit",
+    Comp: StepForeignIncome,
   },
   business: {
     title: "Business or profession",

@@ -13,6 +13,7 @@ export type StepKey =
   | "income"
   | "houseProperties"
   | "capitalGains"
+  | "foreignIncome"
   | "business"
   | "presumptive"
   | "other"
@@ -59,7 +60,7 @@ export const FORMS: Record<FormId, FormMeta> = {
     ],
     notFor: "Income from a business or profession (use ITR-3 or ITR-4).",
     status: "beta",
-    steps: ["personal", "income", "houseProperties", "capitalGains", "other", "deductions", "regime"],
+    steps: ["personal", "income", "houseProperties", "capitalGains", "foreignIncome", "other", "deductions", "regime"],
   },
   ITR3: {
     id: "ITR3",
@@ -79,6 +80,7 @@ export const FORMS: Record<FormId, FormMeta> = {
       "business",
       "houseProperties",
       "capitalGains",
+      "foreignIncome",
       "other",
       "deductions",
       "regime",

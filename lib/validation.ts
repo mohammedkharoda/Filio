@@ -192,6 +192,7 @@ export function ageBandFromDob(dobIso: string): "below60" | "senior60to80" | "su
   const dob = new Date(dobIso);
   if (Number.isNaN(dob.getTime())) return null;
   const ref = new Date("2026-03-31");
+  if (dob > ref) return null;
   let age = ref.getFullYear() - dob.getFullYear();
   const m = ref.getMonth() - dob.getMonth();
   if (m < 0 || (m === 0 && ref.getDate() < dob.getDate())) age--;

@@ -71,6 +71,67 @@ export interface CapitalGainsInfo {
   ltcgEquity112A: number; // listed equity / equity MF, long-term (u/s 112A)
   ltcgOther: number; // other long-term gains (u/s 112, property, debt, etc.)
   cryptoVdaGains: number; // virtual digital assets (flat 30%, no set-off)
+  transactions: CapitalGainTransaction[];
+}
+
+export interface CapitalGainTransaction {
+  id: string;
+  entryMode: "single" | "consolidated";
+  assetType: "listedEquity" | "other" | "specifiedDebtFund";
+  saleValue: number;
+  saleDate: string;
+  purchaseValue: number;
+  purchaseDate: string;
+}
+
+export type ForeignIncomeHead =
+  | "salary"
+  | "houseProperty"
+  | "capitalGains"
+  | "otherSources"
+  | "business";
+
+/** One country/head row used to prepare Schedules FSI and TR. */
+export interface ForeignIncomeEntry {
+  id: string;
+  countryCode: string;
+  tinOrPassport: string;
+  incomeHead: ForeignIncomeHead;
+  grossIncomeInr: number;
+  foreignTaxPaidInr: number;
+  reliefClaimedInr: number;
+  reliefSection: "90" | "90A" | "91";
+  dtaaArticle: string;
+}
+
+export type ForeignAssetType =
+  | "bank"
+  | "custodial"
+  | "equityDebt"
+  | "insurance"
+  | "financialInterest"
+  | "immovable"
+  | "other";
+
+/** A practical working-paper row for Schedule FA; the portal remains authoritative. */
+export interface ForeignAssetEntry {
+  id: string;
+  assetType: ForeignAssetType;
+  countryCode: string;
+  institutionOrAsset: string;
+  accountOrAddress: string;
+  acquisitionDate: string;
+  peakValueInr: number;
+  closingValueInr: number;
+  grossIncomeInr: number;
+  saleProceedsInr: number;
+}
+
+export interface ForeignIncomeInfo {
+  residentialStatus: "ror" | "rnor" | "nr";
+  incomeEntries: ForeignIncomeEntry[];
+  assetEntries: ForeignAssetEntry[];
+  form67Filed: boolean;
 }
 
 /** Business / profession summary for ITR-3 (regular books). Portal carries the full schedules. */
@@ -103,6 +164,7 @@ export interface FilioData {
   // deductions) stay above; these only appear when the chosen form needs them.
   houseProperties: HouseProperty[]; // ITR-2 (ITR-1 keeps its simpler single figure)
   capitalGains: CapitalGainsInfo; // ITR-2 / ITR-3
+  foreignIncome: ForeignIncomeInfo; // Schedules FSI / TR / FA for ITR-2 / ITR-3
   business: BusinessInfo; // ITR-3
   presumptive: PresumptiveInfo; // ITR-4
   chosenRegime: Regime | null; // null = let Filio recommend the cheaper one

@@ -8,6 +8,9 @@ import type {
   DeductionsInfo,
   FilioData,
   FormId,
+  ForeignAssetEntry,
+  ForeignIncomeEntry,
+  ForeignIncomeInfo,
   HouseProperty,
   OtherIncomeInfo,
   PersonalInfo,
@@ -68,6 +71,13 @@ export function createDefaultData(): FilioData {
       ltcgEquity112A: 0,
       ltcgOther: 0,
       cryptoVdaGains: 0,
+      transactions: [],
+    },
+    foreignIncome: {
+      residentialStatus: "ror",
+      incomeEntries: [],
+      assetEntries: [],
+      form67Filed: false,
     },
     business: {
       natureOfBusiness: "",
@@ -86,6 +96,23 @@ export function createDefaultData(): FilioData {
   };
 }
 
+/** Merge additive schema changes without dropping nested defaults from older saved sessions. */
+function withDefaults(saved: FilioData): FilioData {
+  const defaults = createDefaultData();
+  return {
+    ...defaults,
+    ...saved,
+    personal: { ...defaults.personal, ...saved.personal },
+    salary: { ...defaults.salary, ...saved.salary },
+    otherIncome: { ...defaults.otherIncome, ...saved.otherIncome },
+    deductions: { ...defaults.deductions, ...saved.deductions },
+    capitalGains: { ...defaults.capitalGains, ...saved.capitalGains },
+    business: { ...defaults.business, ...saved.business },
+    presumptive: { ...defaults.presumptive, ...saved.presumptive },
+    foreignIncome: { ...defaults.foreignIncome, ...saved.foreignIncome },
+  };
+}
+
 interface FilioStore {
   data: FilioData;
   hydrated: boolean;
@@ -100,6 +127,9 @@ interface FilioStore {
   setDeductions: (patch: Partial<DeductionsInfo>) => void;
   setHouseProperties: (list: HouseProperty[]) => void;
   setCapitalGains: (patch: Partial<CapitalGainsInfo>) => void;
+  setForeignIncome: (patch: Partial<ForeignIncomeInfo>) => void;
+  setForeignIncomeEntries: (list: ForeignIncomeEntry[]) => void;
+  setForeignAssetEntries: (list: ForeignAssetEntry[]) => void;
   setBusiness: (patch: Partial<BusinessInfo>) => void;
   setPresumptive: (patch: Partial<PresumptiveInfo>) => void;
   setChosenRegime: (regime: Regime | null) => void;
@@ -134,7 +164,7 @@ export const useFilioStore = create<FilioStore>((set, get) => {
       if (get().hydrated) return;
       const saved = await loadSession();
       if (saved) {
-        set({ data: { ...createDefaultData(), ...saved }, hydrated: true });
+        set({ data: withDefaults(saved), hydrated: true });
       } else {
         set({ hydrated: true });
       }
@@ -152,13 +182,19 @@ export const useFilioStore = create<FilioStore>((set, get) => {
     setHouseProperties: (list) => mutate((d) => ({ ...d, houseProperties: list })),
     setCapitalGains: (patch) =>
       mutate((d) => ({ ...d, capitalGains: { ...d.capitalGains, ...patch } })),
+    setForeignIncome: (patch) =>
+      mutate((d) => ({ ...d, foreignIncome: { ...d.foreignIncome, ...patch } })),
+    setForeignIncomeEntries: (list) =>
+      mutate((d) => ({ ...d, foreignIncome: { ...d.foreignIncome, incomeEntries: list } })),
+    setForeignAssetEntries: (list) =>
+      mutate((d) => ({ ...d, foreignIncome: { ...d.foreignIncome, assetEntries: list } })),
     setBusiness: (patch) => mutate((d) => ({ ...d, business: { ...d.business, ...patch } })),
     setPresumptive: (patch) =>
       mutate((d) => ({ ...d, presumptive: { ...d.presumptive, ...patch } })),
     setChosenRegime: (regime) => mutate((d) => ({ ...d, chosenRegime: regime })),
 
     importData: (data) => {
-      set({ data: { ...createDefaultData(), ...data, updatedAt: Date.now() } });
+      set({ data: { ...withDefaults(data), updatedAt: Date.now() } });
       scheduleSave();
     },
 

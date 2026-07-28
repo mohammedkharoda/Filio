@@ -45,7 +45,7 @@ export function buildMappingSheet(data: FilioData, comparison: ComparisonResult)
     data.assessmentYear as "2026-27",
   );
 
-  const { personal, salary, otherIncome, deductions } = data;
+  const { personal, salary, otherIncome, deductions, foreignIncome } = data;
   const totalInterest =
     otherIncome.savingsInterest + otherIncome.depositInterest + otherIncome.otherInterest;
   const grossSalary = salary.grossSalary;
@@ -173,6 +173,38 @@ export function buildMappingSheet(data: FilioData, comparison: ComparisonResult)
           h.indicativeTax != null
             ? `Indicative tax ${formatINR(h.indicativeTax)}. ${h.note}`
             : h.note,
+      })),
+    });
+  }
+
+  if (foreignIncome.incomeEntries.length > 0) {
+    sections.push({
+      title: "Schedule FSI / TR - foreign-source income and relief",
+      rows: foreignIncome.incomeEntries.flatMap((entry, index) => [
+        {
+          box: `FSI row ${index + 1}`,
+          label: `${entry.incomeHead} · country ISD ${entry.countryCode || "not set"}`,
+          value: formatINR(entry.grossIncomeInr),
+          note: `TIN/passport ${entry.tinOrPassport || "not set"}. Also report this under its normal income head.`,
+        },
+        {
+          box: `TR row ${index + 1}`,
+          label: `Foreign tax relief · section ${entry.reliefSection}`,
+          value: formatINR(entry.reliefClaimedInr),
+          note: `Foreign tax paid ${formatINR(entry.foreignTaxPaidInr)}${entry.dtaaArticle ? ` · ${entry.dtaaArticle}` : ""}.`,
+        },
+      ]),
+    });
+  }
+
+  if (foreignIncome.assetEntries.length > 0) {
+    sections.push({
+      title: "Schedule FA - foreign assets working paper",
+      rows: foreignIncome.assetEntries.map((entry, index) => ({
+        box: `FA row ${index + 1}`,
+        label: `${entry.assetType} · ${entry.institutionOrAsset || "Description not set"}`,
+        value: `Peak ${formatINR(entry.peakValueInr)} · Closing ${formatINR(entry.closingValueInr)}`,
+        note: `Country ISD ${entry.countryCode || "not set"} · Income ${formatINR(entry.grossIncomeInr)} · Proceeds ${formatINR(entry.saleProceedsInr)}.`,
       })),
     });
   }

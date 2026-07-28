@@ -20,9 +20,10 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { DisclaimerBar } from "@/components/disclaimer-bar";
+import { capitalGainTotals, classifyCapitalGain } from "@/lib/capital-gains";
 
 function stepSummary(key: StepKey, data: FilioData, chosenLabel: string, totalTax: number): string {
-  const { personal, salary, otherIncome, deductions, capitalGains, business, presumptive } = data;
+  const { personal, salary, otherIncome, deductions, capitalGains, business, presumptive, foreignIncome } = data;
   const interest = otherIncome.savingsInterest + otherIncome.depositInterest + otherIncome.otherInterest;
   switch (key) {
     case "personal":
@@ -34,14 +35,11 @@ function stepSummary(key: StepKey, data: FilioData, chosenLabel: string, totalTa
         ? `${data.houseProperties.length} propert${data.houseProperties.length === 1 ? "y" : "ies"}`
         : "None added";
     case "capitalGains": {
-      const total =
-        capitalGains.ltcgEquity112A +
-        capitalGains.stcgEquity111A +
-        capitalGains.ltcgOther +
-        capitalGains.stcgOther +
-        capitalGains.cryptoVdaGains;
-      return total ? `Gains ${formatINR(total)}` : "No gains entered";
+      const totals = capitalGainTotals(capitalGains);
+      return totals.total ? `Net gains ${formatINR(totals.total)}` : "No gains entered";
     }
+    case "foreignIncome":
+      return `${foreignIncome.incomeEntries.length} income entr${foreignIncome.incomeEntries.length === 1 ? "y" : "ies"} · ${foreignIncome.assetEntries.length} asset disclosure${foreignIncome.assetEntries.length === 1 ? "" : "s"}`;
     case "business":
       return `${business.natureOfBusiness || "Business"} · profit ${formatINR(business.netProfit)}`;
     case "presumptive":
@@ -89,11 +87,23 @@ export default function ReviewPage() {
   const warnings: string[] = [];
   if (!data.personal.pan || validatePan(data.personal.pan)) warnings.push("Add a valid PAN.");
   if (!data.personal.fullName) warnings.push("Add your full name.");
-  if (!data.personal.residentConfirmed) warnings.push("Confirm you were a resident of India.");
+  if (
+    (data.selectedForm === "ITR1" || data.selectedForm === "ITR4") &&
+    !data.personal.residentConfirmed
+  )
+    warnings.push("Confirm you were a resident of India.");
   if (data.salary.grossSalary === 0 && totalInterest === 0)
     warnings.push("No income entered yet. Add your salary or interest.");
   if (comp.staged)
     warnings.push("This form includes heads finalized on the portal. Filio's total is a partial estimate.");
+  const incompleteSales = (data.capitalGains.transactions ?? []).filter(
+    (transaction) => !classifyCapitalGain(transaction).valid,
+  ).length;
+  if (incompleteSales > 0)
+    warnings.push(`${incompleteSales} capital-gain sale entr${incompleteSales === 1 ? "y is" : "ies are"} incomplete and not included.`);
+  const reliefClaimed = data.foreignIncome.incomeEntries.some((entry) => entry.reliefClaimedInr > 0);
+  if (reliefClaimed && !data.foreignIncome.form67Filed)
+    warnings.push("Foreign tax relief is entered, but Form 67 is not marked as prepared/filed.");
 
   const sections = form.steps.map((key) => ({
     key,

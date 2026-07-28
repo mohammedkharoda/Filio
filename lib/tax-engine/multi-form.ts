@@ -17,6 +17,7 @@ import type {
   FormId,
   PresumptiveInfo,
 } from "@/store/types";
+import { capitalGainTotals } from "@/lib/capital-gains";
 
 // Special rates for the flat-rate heads (Finance Act 2025 / post 23 Jul 2024).
 // Verify at incometax.gov.in before release; used only for INDICATIVE figures.
@@ -53,48 +54,49 @@ export interface FormExtras {
 function capitalGainsHeads(cg: CapitalGainsInfo, cfg: (typeof AY_CONFIGS)["2026-27"]): StagedHead[] {
   const heads: StagedHead[] = [];
   const exemption = cfg.ltcg112A.exemptionLimit;
+  const totals = capitalGainTotals(cg);
 
-  if (cg.ltcgEquity112A > 0) {
-    const taxable = Math.max(cg.ltcgEquity112A - exemption, 0);
+  if (totals.ltcgEquity112A !== 0) {
+    const taxable = Math.max(totals.ltcgEquity112A - exemption, 0);
     heads.push({
       key: "ltcg112A",
       label: "LTCG on listed equity / equity funds (112A)",
-      amount: cg.ltcgEquity112A,
+      amount: totals.ltcgEquity112A,
       indicativeTax: taxable * RATE_LTCG_112A,
       note: `First Rs 1.25 lakh is exempt; the balance is taxed at 12.5%. Set-off and grandfathering are applied on the portal.`,
     });
   }
-  if (cg.stcgEquity111A > 0) {
+  if (totals.stcgEquity111A !== 0) {
     heads.push({
       key: "stcg111A",
       label: "STCG on listed equity / equity funds (111A)",
-      amount: cg.stcgEquity111A,
-      indicativeTax: cg.stcgEquity111A * RATE_STCG_111A,
+      amount: totals.stcgEquity111A,
+      indicativeTax: Math.max(totals.stcgEquity111A, 0) * RATE_STCG_111A,
       note: "Taxed at 20% (transfers on or after 23 Jul 2024). Confirmed on the portal.",
     });
   }
-  if (cg.stcgOther > 0) {
+  if (totals.stcgOther !== 0) {
     heads.push({
       key: "stcgOther",
       label: "Other short-term capital gains",
-      amount: cg.stcgOther,
+      amount: totals.stcgOther,
       note: "Added to total income and taxed at slab rates on the portal.",
     });
   }
-  if (cg.ltcgOther > 0) {
+  if (totals.ltcgOther !== 0) {
     heads.push({
       key: "ltcgOther",
       label: "Other long-term capital gains (property, debt, etc.)",
-      amount: cg.ltcgOther,
+      amount: totals.ltcgOther,
       note: "Indexation and set-off decide the taxable amount. Finalized on the portal.",
     });
   }
-  if (cg.cryptoVdaGains > 0) {
+  if (totals.cryptoVdaGains > 0) {
     heads.push({
       key: "vda",
       label: "Virtual digital assets (crypto)",
-      amount: cg.cryptoVdaGains,
-      indicativeTax: cg.cryptoVdaGains * RATE_VDA,
+      amount: totals.cryptoVdaGains,
+      indicativeTax: totals.cryptoVdaGains * RATE_VDA,
       note: "Flat 30%, with no set-off and no deductions. Confirmed on the portal.",
     });
   }
